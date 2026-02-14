@@ -9,3 +9,8 @@
 - Conservative deduplication: For learning consolidation, prefer false negatives (missing a duplicate) over false positives (rejecting unique insights).
 - Domain-specific overlays pattern: Separating base rules from domain-specific rules (Python, TypeScript) creates cleaner templates and easier maintenance.
 - Audit-first consolidation: Running an automated audit before consolidation provides clear metrics and helps prioritize which artifacts to merge first.
+- Pydantic for strong typing: Using Pydantic BaseModel for data structures provides excellent validation and type safety for configuration files like manifests.
+- Click for CLI tools: Click library provides clean, well-documented CLI interfaces with minimal boilerplate compared to argparse.
+- Test organization: Grouping tests by functional area with descriptive headers and docstrings improves maintainability and understanding.
+- Virtual environment per project: Each project should have its own `.venv` to isolate dependencies and avoid conflicts between tools.
+
