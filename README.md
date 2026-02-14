@@ -1,2 +1,3 @@
 # BigBang
-Meta repository as a started for agent based coding projects
+
+Meta repository as a starter for agent based coding projects
