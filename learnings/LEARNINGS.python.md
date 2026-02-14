@@ -1,0 +1,31 @@
+# Python Learnings
+
+- Ruff outdated rules: Rules `ANN101` and `ANN102` are no longer supported in recent ruff versions. Remove them from ignore list to avoid warnings.
+- tomllib availability: Python 3.12+ is required, so `tomllib` is always available without version checks or try/except blocks.
+- pyproject.toml parsing: Use `tomllib.load()` with open file in binary mode (`rb`) rather than `tomllib.loads()` with decoded strings for better performance and cleaner code.
+- Package structure: The src/pulsar/ layout prevents accidental imports of production code before installation, improving test reliability.
+- Pydantic v2 ConfigDict migration: All Pydantic v2 models should use `ConfigDict` instead of class-based `Config` to avoid deprecation warnings.
+- Decimal for financial data: Using `Decimal` for all monetary values (prices, volumes, amounts) is crucial for precision in trading calculations.
+- StrEnum for compatibility: Using `StrEnum` (inheriting from both `str` and `Enum`) ensures JSON serialization compatibility and string comparisons work as expected without explicit `.value` calls.
+- Model validators for cross-field logic: Use `@model_validator(mode="after")` for validations that depend on multiple fields.
+- HDF5 append pattern: When appending data to HDF5, always read existing data first, deduplicate the new data by timestamp, concatenate both with `pd.concat()`, then write the combined result.
+- Numpy type checking: When reading numeric values from HDF5 via pandas, the values come as numpy types (np.int64, np.float64) not Python native types. Type checks must use `isinstance(value, (int, float, np.integer, np.floating))`.
+- Async collectors simplify API orchestration: Making all collectors async-first (via `async def fetch()`) allows concurrent API calls at the CLI level without requiring complex threading logic.
+- HDF5 metadata attributes: Store schema information and last_update timestamp in HDF5 group attributes for auditability.
+- Compression in HDF5: Always enable gzip compression (level 4) on datasets to reduce file size by 80-90% for typical time-series data.
+- ccxt in type annotations: The ccxt library doesn't have type stubs, so use `# type: ignore[import-untyped]` on the import and return type `"ccxt.Exchange"` (string literal) to avoid mypy errors.
+- Unix epoch timestamp unit parameter: When using `pd.to_datetime()` on numeric Unix epoch timestamps (stored as seconds), always specify `unit="s"` to avoid pandas treating them as nanoseconds (default).
+- Pandas fillna API changes: The `method` parameter for `fillna()` is deprecated in pandas 2.0+. Use direct method calls: `series.ffill()`, `series.bfill()` instead of `series.fillna(method='ffill')`.
+- scikit-learn dependency: The preprocessing pipeline uses `sklearn.preprocessing.MinMaxScaler` for normalization. Add `scikit-learn>=1.4` to requirements.txt.
+- ta library indicator warmup periods: Many technical indicators from the `ta` library require significant warmup periods before producing valid values. Always provide sufficient test data (50+ rows) when testing indicators.
+- Float vs integer DataFrames for indicators: Technical indicators computed by the `ta` library produce float values. Always use float dtypes for OHLCV columns to avoid `TypeError: Invalid value for dtype 'int64'`.
+- Decimal sum() with explicit start value: When summing `Decimal` fields from Pydantic models, use `sum((item.field for item in items), Decimal("0"))` with an explicit `Decimal` start value.
+- Pydantic strict mode breaks JSON round-trip: `AuditEvent` models with `ConfigDict(strict=True)` cannot be deserialized via `json.loads()` → `model_validate()` because strict mode rejects string timestamps. Use `model_validate_json(line)` instead.
+- Variable initialization before try blocks: When variables are referenced in `finally` blocks, initialize them before the `try` block to avoid `UnboundLocalError` if the initialization fails.
+- Python linting migration to ruff: When migrating from pylint + bandit to ruff, ruff is significantly faster and handles multiple concerns (linting, formatting, import sorting) with a single tool.
+- Parameter naming in API methods: When designing API methods, avoid parameter names that shadow Python builtins like `id`. Use descriptive alternatives like `element_id`, `user_id`, or `object_id` instead.
+- PyInstaller vs embedded Python for desktop apps: PyInstaller is superior to manually managing embedded Python distributions for cross-platform desktop apps. It automatically handles native extensions (numpy, pandas, h5py) and bundles only imported modules.
+- PyInstaller platform detection: Use `sys.platform` to detect OS ('win32', 'darwin', 'linux') and configure platform-specific settings.
+- Cross-platform Python venv paths: Virtual environment executables are in different locations on different OSes: Windows: `.venv\Scripts\python.exe`, Unix (Linux/Mac): `.venv/bin/python`.
+- Python version selection for Codespaces: Python 3.12 (not 3.14) is the latest stable version available in Microsoft's devcontainer images as of early 2026.
+- keytar dependency with Node.js 24: The `keytar` dependency (version 7.2.0) failed to build with Node.js 24 due to missing prebuilt binaries and Python `distutils` module issues. Solution: upgrade keytar to 7.9.0 or install `python3-setuptools`.
