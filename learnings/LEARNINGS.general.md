@@ -1,0 +1,87 @@
+# General Learnings
+
+- Planning documents should follow a consistent numbered convention (00-overview, 01-phase1, etc.) with standard sections: Objective, Implementation Details, Tests Required, Acceptance Criteria, Dependencies, Risk Assessment.
+- Each planning document should include a model recommendation (Haiku/Sonnet/Opus) and extended thinking flag to guide the implementing agent.
+- Planning document structure for UI projects: Each step document should include a view layout (ASCII mockup), component breakdown, API endpoints used, testing plan table, acceptance criteria checklist, and agent hints.
+- Extended thinking markers: Steps requiring complex architectural decisions should be marked with "Extended Thinking Required: Yes".
+- VSCode tasks provide better developer experience than shell commands for repeated workflows, enabling quick invocation and background process management.
+- Test isolation: Test files should use `Path(__file__).parent.parent` to locate project root and access configuration files, ensuring tests remain isolated and portable.
+- data/ directory management: Use `.gitkeep` sentinel files in data/raw/ and data/processed/ to ensure directories are tracked but actual data files are ignored.
+- venv setup script pattern: Create bash setup scripts with clear error checking before creating the venv. Include informative output at each step.
+- Setup documentation completeness: Comprehensive setup documentation should include prerequisites, step-by-step instructions, VSCode integration, daily workflow, troubleshooting, and project structure overview.
+- Structured logging in data pipelines: Use structlog for all data collection steps to create an audit trail. This is invaluable for debugging incremental collection workflows.
+- CLI design with async support: Click commands can wrap async functions with asyncio.run().
+- Integration test isolation with pytest markers: Use `@pytest.mark.integration` to mark tests that call real external APIs. These tests should NOT run by default.
+- Real data validation in integration tests: When testing with real APIs, validate data quality: check OHLCV constraints, timestamp ordering, no duplicates, no NaN values.
+- Documentation structure signals feature maturity: Use "🚀" or "✅" for ready features and "⏳" or "(coming soon)" for planned features.
+- Progressive documentation hierarchy: Structure documentation by user expertise level rather than by topic. Create three tiers: Quick Start, Usage Guide, Developer Setup.
+- Desktop app as primary entry point: When both CLI and GUI interfaces exist, position the desktop application as the primary entry point in documentation.
+- README as documentation index: The main README should serve as a documentation index with prominent "Quick Start" section at the top.
+- Safety tips in user documentation: For trading/financial applications, include safety tips prominently in user-facing docs.
+- File headers and licensing consistency: All new source files must include the project's standard header block.
+- Testing strategy: Different layers warrant different coverage targets. Backend API routes ~90%, frontend stores ~85%, frontend components ~75%.
+- Comprehensive test documentation structure: Testing documentation should cover test commands for each layer, VSCode task descriptions, coverage targets, and prerequisites.
+- Error handling with recovery strategies: Use enum `ErrorAction(RETRY, SKIP, ABORT, FALLBACK)` for decisions rather than hardcoded strings.
+- Dry-run mode for testing pipelines: Add `dry_run` parameter to pipeline runners that validates configurations without executing operations.
+- Context passing between pipeline steps: Use context models to pass shared state through pipelines. Add methods to context for retrieving previous step results.
+- Documentation for multi-platform builds: Packaging documentation should clearly explain per-platform build requirements, how to test installers, and platform-specific installer features.
+- Comprehensive documentation for Codespaces: Include setup instructions, development workflows, extension information, troubleshooting, and FAQs.
+- Clean project structure: Separate `src/` and `tests/` directories mirroring each other makes it easy to scale as components are added.
+- Pure-function engine modules: Modules with no React dependencies are straightforward to test with plain Vitest.
+- Responsive layouts: Use Tailwind's `flex-col lg:flex-row` pattern for adaptive designs that stack vertically on mobile.
+- Custom hooks: Custom hooks like `useParabola` provide clean separation of state management from UI components.
+- Category-based module architecture: Use category selectors instead of single exercise types when appropriate.
+- LocalStorage in tests: When mocking localStorage in test files, use `Object.defineProperty(globalThis, 'localStorage', ...)`.
+- React Context with automatic persistence: Combining React Context with `useEffect` for auto-saving to localStorage provides clean persistent state.
+- Skip-to-content link: A skip link allows keyboard users to bypass repeated navigation and jump directly to main content.
+- Semantic HTML structure: Use semantic elements instead of generic `<div>` containers for better accessibility and SEO.
+- ARIA attributes for dynamic content: Add `aria-live="polite"` and `aria-atomic="true"` to feedback messages so screen readers announce changes.
+- Focus styles for accessibility: Define global focus styles using `:focus-visible` to ensure all interactive elements have clear focus indicators.
+- Minimum touch target sizes: On touch devices, ensure all interactive elements meet the WCAG 2.1 minimum size of 44×44 pixels.
+- Page transitions with CSS animations: Adding smooth page transitions enhances user experience. Use `@keyframes fadeIn` animation.
+- Lazy loading with React.lazy: For better initial load performance, use `React.lazy` to code-split module pages.
+- Error boundaries for resilience: Implement class-based `ErrorBoundary` component to catch unhandled React errors.
+- Graceful localStorage handling: Storage utilities should handle quota exceeded and parse errors gracefully by logging warnings and returning defaults.
+- Repository name vs. application name: When renaming an application, the repository name on GitHub can remain unchanged.
+- Systematic find-replace workflow: For comprehensive renaming tasks, use a systematic approach: search with grep, group files by category, update separately.
+- Thread-safe subprocess output handling: When testing or monitoring subprocess output in real-time, use separate threads with queues.
+- Interactive point selection with raycasting: For 3D point picking, use existing raycasting utilities to convert 2D screen coordinates to 3D world coordinates.
+- Context-based cross-component communication: For features requiring communication between distant components, use React Context with Provider/Consumer pattern.
+- GraphQL lazy queries for user-triggered actions: Use `useLazyQuery` instead of `useQuery` when queries should only run in response to specific user actions.
+- CRITICAL: Playwright force parameter masks real UX issues: Tests using `force=true` can pass while the actual user workflow is completely broken.
+- Dialog overlay pointer-events: Control overlay's `pointer-events` CSS property via React state for interactive workflows.
+- Preventing modal dialogs from closing: Add `onInteractOutside` handler that calls `e.preventDefault()` for multi-step workflows.
+- CRITICAL: GraphQLService method signatures differ from Apollo Client: Wrapper methods should take document and variables as separate parameters.
+- Theia extension structure with namespace exports: Use namespace exports to organize related constants and create self-documenting API.
+- Menu path construction in Theia: Menu paths are arrays representing hierarchy with ordering prefixes for consistent ordering.
+- ContainerModule binding scope: Use `.inSingletonScope()` for contribution interface implementations.
+- Theia keybinding format: Use `ctrlcmd` modifier in keybindings to provide cross-platform shortcuts.
+- ReactWidget with @react-three/fiber: Using Theia's `ReactWidget` and embedding R3F's `<Canvas>` is the simplest migration path for 3D viewports.
+- CSS file handling in Theia extensions: CSS files must be copied to output directory during build because TypeScript only compiles `.ts`/`.tsx` files.
+- Service-only Theia classes can be tested without DI: Services using only common modules can be instantiated directly in tests.
+- Testing Theia contributions with mocks: Contributions can be tested using mock implementations of registry parameters.
+- Theia TreeWidget implementation patterns: Use three-layer architecture: TreeNode, TreeModel, TreeWidget.
+- Theia widget context menus: Context menu paths are registered through MenuContribution, commands enabled/disabled based on widget state.
+- TabBarToolbarContribution: Theia provides this for contributing toolbar items to widget tab bars.
+- AbstractDialog for custom dialogs: Use constructor injection rather than `@inject()` decorators for dialogs.
+- Theia application branding: Configure in `theia/electron-app/package.json` under `theia.frontend.config`.
+- AbstractViewContribution widget property: Access managed widget via `widget` property which returns `Promise<Widget>`.
+- PreferenceProxy pattern: Create proxy service that wraps PreferenceService and provides typed getters.
+- Preference synchronization with backend: Create sync service that listens to preference changes and syncs via GraphQL mutations.
+- Dead API surface creates maintenance debt: When adding new implementations, remove or update APIs that become obsolete.
+- File import validation: Always validate imported structures contain expected geometry with user-facing error messages.
+- Promise handling in command handlers: Command handlers should return promises from async operations.
+- Disposable cleanup in lifecycle methods: Services that register event listeners must store and clean up Disposable objects.
+- Theia backend process management: Use BackendApplicationContribution for lifecycle hooks.
+- Vitest test infrastructure setup: Critical initialization sequence for testing Theia extensions.
+- Test utilities for Theia DI containers: Create utility functions to generate test DI containers with mock services.
+- GraphQL mock utilities: Provide mock data structures in centralized utilities file.
+- Test mock design: Model event-based APIs as callable functions to match production contract.
+- DocumentNode key normalization: Use `doc?.loc?.source?.body` for stable keys, not `toString()`.
+- Generic types for test helpers: Use generic types for proper type inference and autocomplete.
+- Global/prototype mutation restoration: Always restore original implementations in afterEach hook.
+- TypeScript compilation configuration: Exclude test files from main tsconfig.json using explicit exclude patterns.
+- Theia integration test migration: Theia manages entire frontend lifecycle including Python backend.
+- Centralized selector pattern: Create centralized selector module for Theia DOM structure.
+- Helper function pattern: Create helpers that abstract Theia's UI patterns.
+- Theia startup detection: Wait for stable widget visibility rather than just polling root URL.

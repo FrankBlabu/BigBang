@@ -1,0 +1,69 @@
+# TypeScript Learnings
+
+- Zustand store testing pattern: When testing Zustand stores, always re-query the state after actions using `useStore.getState()` rather than destructuring state once at the start.
+- React hooks cannot be called in test functions: Custom hooks like selectors cannot be called directly in test functions. Instead, test the core store logic directly or use component wrappers with React Testing Library.
+- Toast notification auto-dismiss: Implement auto-dismiss using `setTimeout` in the store action, storing timer IDs to allow cancellation on manual dismiss.
+- Ring buffer implementation: Maintain a maximum log buffer size by checking `if (array.length > MAX_SIZE) array.shift()` after each append.
+- TypeScript LogLevel to priority mapping: Create a `LOG_LEVEL_PRIORITY` map (DEBUG: 0, INFO: 1, WARNING: 2, ERROR: 3) to enable "minimum level" filtering.
+- Test data-testid attributes: Add `data-testid` attributes to all interactive and testable elements for reliable E2E testing.
+- Vitest fake timers for auto-dismiss tests: Use `vi.useFakeTimers()` and `vi.advanceTimersByTime(ms)` to test setTimeout-based auto-dismiss logic without waiting for real timeouts.
+- VSCode tasks configuration: Use `bash -c` for complex commands (e.g., combining ruff and mypy) to allow proper shell syntax without nested command strings.
+- JSON schema with ConfigDict: The `json_schema_extra` parameter in `ConfigDict` replaces the deprecated `ClassVar` annotation pattern.
+- Electron for local filesystem access: Electron is the appropriate choice when a web-based UI needs to access the local filesystem. It provides cross-platform support and eliminates browser security restrictions.
+- WebSocket for pipeline progress: Real-time progress visualization requires WebSocket connections. Design events as typed JSON messages with a `type` field for routing.
+- FastAPI with asyncio.to_thread pattern: When wrapping synchronous libraries (h5py, pandas) in FastAPI endpoints, always use `await asyncio.to_thread(sync_function, args)` to avoid blocking the event loop.
+- Pydantic response models for API documentation: Always define Pydantic models for API responses (not raw dicts). This provides automatic OpenAPI schema generation and request/response validation.
+- CORS for local development: Enable CORS with `allow_origins=["*"]` for Electron apps connecting to localhost API. This is safe for local-only APIs.
+- electron-vite project structure: Use electron-vite for Electron + Vite integration with three separate build configurations: main process, preload script, and renderer (React app).
+- TypeScript composite projects: When using project references in tsconfig.json, the referenced project must NOT have `noEmit: true` when `composite: true` is set.
+- React 18 with TypeScript strict mode: When using strict TypeScript, avoid rendering `unknown` types directly in JSX. Use explicit null/undefined checks.
+- Backend process lifecycle in Electron: Launch the FastAPI backend as a subprocess in Electron's main process using `spawn()` with `stdio: 'inherit'`.
+- WebSocket reconnection strategy: Implement exponential backoff for WebSocket reconnections (1s, 2s, 4s, 8s...) with a maximum retry limit.
+- Zustand store simplicity: For simple global state, Zustand provides a cleaner API than Redux with less boilerplate.
+- TanStack Query for API data fetching: Configure QueryClient with sensible defaults: `refetchOnWindowFocus: false`, `retry: 1`, `staleTime: 5000`.
+- JSON.stringify for unknown types: When rendering unknown values from API responses in JSX, always cast to a known type before JSON.stringify.
+- TradingView Lightweight Charts in React: Use a `useRef` + `useEffect` pattern to create/destroy the chart imperatively. Call `chart.remove()` in the cleanup function to avoid memory leaks.
+- Recharts mocking in Vitest: Mock `recharts` at module level in test files to replace components that require real DOM dimensions.
+- Typed React Query hooks: When adding TypeScript types to `useQuery` calls, use the generic form `useQuery<ReturnType>({ ... })`.
+- Keyboard accessibility for role="button" divs: Clickable `<div>` elements with `role="button"` must handle both Enter and Space keys to meet WCAG standards.
+- Lightweight-charts Time format for intraday data: Use numeric epoch seconds directly (cast as `Time`) to preserve intraday resolution and correct chart rendering.
+- React ref race condition in useEffect: Creating DOM elements in effects that run on `[]` dependencies can fail if the ref is null on first run. Render the container unconditionally.
+- FastAPI route definition order matters: FastAPI matches routes in the order they are defined. Always define specific literal paths before parameterized paths.
+- React loading states for async operations: When triggering long-running fetch operations, manage loading state per operation to provide visual feedback without blocking the UI.
+- Tree auto-expansion depth: When building collapsible trees, auto-expanding only the top levels (depth < 2) keeps the UI uncluttered for large datasets.
+- Conditional React Query hooks: Disable expensive queries by passing empty strings as parameters combined with `enabled: !!source && !!group` in the hook.
+- Frontend barrel exports for component directories: When creating a directory of related components, always create an `index.ts` barrel that re-exports all components.
+- Parameter validation at API boundaries: Always validate API input constraints early and reject with 400 error messages that explain limitations.
+- Component layout planning for multiple content flows: React components with `flex justify-between` assume only two aligned elements. Plan structure upfront to account for optional/error content flows.
+- Vitest E2E test exclusion: When using both Vitest for unit tests and Playwright for E2E tests, exclude E2E test files from Vitest by adding `exclude: ['**/tests/e2e/**']`.
+- Coverage provider version compatibility: The `@vitest/coverage-v8` package must use the same version as `vitest` because its `peerDependencies` strictly require an exact match.
+- Playwright for Electron E2E tests: Playwright has built-in Electron support via `_electron.launch()`.
+- npm project type module: Set `"type": "module"` in package.json for ESM support throughout the project.
+- React Testing Library with Vitest: Configure Vitest with `globals: true` and `environment: 'jsdom'` for React component testing.
+- Manual project scaffolding: Manual project scaffolding (creating files directly) is more reliable than using `npm create vite` when a directory contains non-source files.
+- Tailwind CSS v3 uses PostCSS: Use `@tailwind base/components/utilities` approach, not `@import "tailwindcss"`.
+- Import paths in test files: Import paths should be relative to the test file location. Use `../../src/App` from `tests/pages/App.test.tsx`.
+- JavaScript produces `-0`: JavaScript produces `-0` for expressions like `-2 * a * 0`. The `toEqual` matcher distinguishes `-0` from `+0`.
+- SVG coordinate space: SVG coordinate space has an inverted y-axis (positive y points downward).
+- Range input testing: Range `<input type="range">` elements cannot be cleared with `user.clear()`. Use `fireEvent.change()` instead.
+- useMemo for expensive calculations: `useMemo` is essential for expensive derived calculations to avoid recomputing on every render.
+- Node.js version constraints in Theia: Theia's package.json may have strict Node.js version constraints that need updating as Node.js evolves.
+- Apollo Client integration with Theia DI: Apollo Client can be wrapped in a DI-injectable service for clean integration with Theia.
+- RJSF integration in Theia dialogs: RJSF (react-jsonschema-form) can be embedded inside Theia's `AbstractDialog` by using `ReactDOM.render()`.
+- GraphQL @oneOf type detection heuristic: When detecting @oneOf types from GraphQL introspection data, require at least 2 fields in the heuristic.
+- Theia AbstractDialog title access in tests: The `title` property returns a `Title` object, not a string. Access title text via `titleNode.textContent`.
+- THREE.js type casting complexity: Use `geometry as unknown as BufferGeometry` pattern to handle loader type mismatches.
+- React useEffect dependencies for context consumption: Carefully manage useEffect dependencies in consuming components. Only include stable, primitive dependencies and callbacks.
+- Theia browser modules import CSS at load time: Theia's compiled `.js` files contain `require('.../foo.css')` statements that execute at import time.
+- jsdom does not implement `document.queryCommandSupported`: Stub it with `document.queryCommandSupported = () => false` before any Theia browser imports.
+- R3F Canvas requires ResizeObserver polyfill in jsdom: Provide a minimal no-op polyfill in test setup.
+- Electron Forge webpack plugin: Electron Forge webpack plugin injects dev server client regardless of hot/liveReload settings if nodeIntegration is not enabled.
+- contextBridge availability check: Use `typeof contextBridge !== 'undefined'` to check for contextBridge availability.
+- Subprocess with PIPE requires careful handling: Use `communicate()` with timeout instead of direct `read()` calls on stdout/stderr to avoid blocking issues.
+- File objects in Electron: File objects have both standard properties AND a `path` property. Check for both when determining filenames.
+- Electron Forge logger port conflicts: electron-forge uses port 9000 by default for its logging server which can conflict with other services.
+- CRITICAL: Electron did-finish-load race condition: The `did-finish-load` event handler MUST be registered BEFORE calling `loadURL()`.
+- CRITICAL: Apollo Client URI must be resolved at request time: When using HttpLink with Apollo Client in Electron, the URI must be a function not a string.
+- CRITICAL: IPC event listeners without cleanup cause memory leaks: Always ensure preload API methods return cleanup functions.
+- CRITICAL: Webpack DefinePlugin defaults can mask missing runtime backend URIs: Use functions for URI resolution, not static strings.
+- CRITICAL: Preload scripts must NOT use browser polyfills: Create a separate webpack config for preload scripts with no browser fallbacks.
