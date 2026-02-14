@@ -1,5 +1,5 @@
 ---
-name: pulsar_implement
+name: bigbang_implement
 description: Perform an implementation task
 agent: agent
 ---

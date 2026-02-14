@@ -1,5 +1,5 @@
 ---
-name: pulsar_system
+name: bigbang_system
 description: Commit changes in the general project utilities and prompts
 agent: agent
 ---

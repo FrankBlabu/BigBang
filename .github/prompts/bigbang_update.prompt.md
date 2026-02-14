@@ -1,5 +1,5 @@
 ---
-name: pulsar_update
+name: bigbang_update
 description: Update the project dependencies and perform necessary code changes to keep the project up to date with the latest versions of libraries and tools.
 agent: agent
 ---

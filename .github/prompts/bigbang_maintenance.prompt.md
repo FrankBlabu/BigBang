@@ -1,5 +1,5 @@
 ---
-name: pulsar_maintenance
+name: bigbang_maintenance
 description: Perform maintenance tasks to keep the project in good shape
 agent: agent
 ---

@@ -1,5 +1,5 @@
 ---
-name: pulsar_commit
+name: bigbang_commit
 description: Commit the current changes
 agent: agent
 ---

@@ -1,5 +1,5 @@
 ---
-name: pulsar_coverage
+name: bigbang_coverage
 description: Increase test coverage
 agent: agent
 ---
@@ -13,7 +13,7 @@ The code coverage should be high enough to have a well tested software, but not 
 # Workflow
 
 - Execute the task `Coverage` in vscode to compute the test code coverage and generate all necessary files.
-- The coverage result is written into the `build/coverage/pulsar.json` file. Analyse it for coverage results.
+- The coverage result is written into the `build/coverage/` directory. Analyse it for coverage results.
 - Make a plan about how to increase code coverage in a balanced way. Especially think about:
   - If a code path is critical and should be covered.
   - If a code path is complex and should be covered.
