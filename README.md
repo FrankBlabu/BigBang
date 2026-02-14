@@ -86,7 +86,8 @@ Run the test suite:
 ```
 BigBang/
 ├── .github/              # GitHub configuration
-│   └── prompts/          # Prompt templates for BigBang itself
+│   ├── prompts/          # Prompt templates for BigBang itself
+│   └── workflows/        # GitHub Actions workflows
 ├── doc/                  # Documentation
 │   └── planning/         # Planning documents
 ├── learnings/            # Domain-specific learnings
