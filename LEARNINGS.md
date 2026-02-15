@@ -13,4 +13,5 @@
 - Click for CLI tools: Click library provides clean, well-documented CLI interfaces with minimal boilerplate compared to argparse.
 - Test organization: Grouping tests by functional area with descriptive headers and docstrings improves maintainability and understanding.
 - Virtual environment per project: Each project should have its own `.venv` to isolate dependencies and avoid conflicts between tools.
+- GitHub Actions for maintenance reminders: Scheduled workflows with `workflow_dispatch` for manual testing ensure automated governance tasks are tracked via issues without requiring external tools.
 

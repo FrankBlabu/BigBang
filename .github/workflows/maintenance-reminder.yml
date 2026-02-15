@@ -1,0 +1,73 @@
+# Monthly Maintenance Reminder
+#
+# This workflow creates a monthly maintenance reminder issue on the first day
+# of each month to ensure ongoing governance tasks are performed.
+#
+# See: doc/planning/06-governance.md for the maintenance cadence details.
+
+name: Monthly Maintenance Reminder
+
+on:
+  schedule:
+    # Run at 9:00 AM UTC on the first day of every month
+    - cron: "0 9 1 * *"
+  
+  # Allow manual trigger for testing
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  remind:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Create maintenance issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Format the month name for the issue title
+          MONTH_YEAR=$(date +"%B %Y")
+          
+          # Create the issue with the maintenance checklist
+          gh issue create \
+            --title "Monthly maintenance — ${MONTH_YEAR}" \
+            --label "maintenance" \
+            --body "$(cat <<'EOF'
+          # Monthly BigBang Maintenance Cycle
+          
+          Time for the monthly BigBang maintenance cycle. See [doc/planning/06-governance.md](doc/planning/06-governance.md) for complete details.
+          
+          ## Checklist
+          
+          ### Harvesting
+          - [ ] Run `bigbang_harvest.prompt.md` for active projects
+          - [ ] Review and merge harvested learnings
+          - [ ] Review and merge harvested prompt improvements
+          
+          ### Learnings Review
+          - [ ] Review `learnings/` files for duplicates
+          - [ ] Check for outdated entries (deprecated tools, old versions)
+          - [ ] Check for contradictory entries within domains
+          
+          ### Quality Assurance
+          - [ ] Run `bigbang_audit.prompt.md` to check repository health
+          - [ ] Address any issues found in audit report
+          
+          ### Version Management
+          - [ ] Review if any changes warrant a version bump
+          - [ ] Update `CHANGELOG.md` if changes were made
+          - [ ] Consider `bigbang-push-all --dry-run` to preview impact on seeded projects
+          
+          ## Notes
+          
+          - Quarterly tasks (if applicable this month):
+            - Review copilot-instructions for currency
+            - Review prompt templates for workflow improvements
+          
+          EOF
+          )"
